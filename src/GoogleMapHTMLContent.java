@@ -219,7 +219,7 @@ public class GoogleMapHTMLContent {
 				+ "    // Replace 'YOUR_API_KEY' with your actual Google Maps API key.\r\n"
 				+ "    function loadScript() {\r\n"
 				+ "        const script = document.createElement(\"script\");\r\n"
-				+ "        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAmNkaGHturLmgMk_KAxICazFBh38Zoov8&libraries=places&callback=initMap`;\r\n"
+				+ "        script.src = `"
 				+ "        script.async = true;\r\n"
 				+ "        document.head.appendChild(script);\r\n"
 				+ "    }\r\n"
@@ -232,4 +232,5 @@ public class GoogleMapHTMLContent {
 
 	}
 }
+
 
