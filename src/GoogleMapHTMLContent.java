@@ -99,7 +99,7 @@ public class GoogleMapHTMLContent {
 				+ "            margin-right: 10px;\r\n"
 				+ "        }\r\n"
 				+ "    </style>\r\n"
-				+ "    <script src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyAmNkaGHturLmgMk_KAxICazFBh38Zoov8&libraries=places\" defer></script>\r\n"
+				+ "    <script></script>\r\n"
 				+ "</head>\r\n"
 				+ "<body>\r\n"
 				+ "\r\n"
@@ -232,3 +232,4 @@ public class GoogleMapHTMLContent {
 
 	}
 }
+
