@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps with Search Box, Nearby Search, and Place Details</title>
+    <style>
+        #map {
+            height: 800px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #search-box {
+            width: 300px;
+            margin-bottom: 10px;
+        }
+
+        #place-details {
+            margin-top: 10px;
+        }
+
+        button {
+            margin-right: 10px;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmNkaGHturLmgMk_KAxICazFBh38Zoov8&libraries=places" defer></script>
+</head>
+<body>
+
+<div id="map"></div>
+<input type="text" id="search-box" placeholder="Search for places" value="Testing">
+<div id="place-details"></div>
+<button onclick="clearMarkers()">Clear Markers</button>
+<!--<button onclick="refreshPage()">Refresh Page</button>-->
+
+<script>
+    let map;
+    let service;
+    let infowindow;
+    let customMarkers = [];
+
+    function initMap() {
+        const location = {lat: 40.76315, lng: -73.8028}; // Your desired location coordinates
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: location,
+            zoom: 15,
+        });
+
+        service = new google.maps.places.PlacesService(map);
+        infowindow = new google.maps.InfoWindow();
+
+        // Create a search box and link it to the UI element
+        const searchBox = new google.maps.places.SearchBox(
+            document.getElementById("search-box")
+        );
+
+        // Bias the SearchBox results towards the map's viewport
+        map.addListener("bounds_changed", () => {
+            searchBox.setBounds(map.getBounds());
+        });
+
+        // Listen for the event when a user selects a prediction from the search box
+        searchBox.addListener("places_changed", () => {
+            const places = searchBox.getPlaces();
+
+            if (places.length === 0) {
+                return;
+            }
+
+            // Clear any existing markers
+            clearMarkers();
+
+            // For each place, get the icon, name, and location
+            const bounds = new google.maps.LatLngBounds();
+
+            places.forEach((place) => {
+                if (!place.geometry) {
+                    console.log("Returned place contains no geometry");
+                    return;
+                }
+
+                // Create a custom marker for each place
+                const marker = new google.maps.Marker({
+                    map,
+                    title: place.name,
+                    position: place.geometry.location,
+                });
+
+                google.maps.event.addListener(marker, "click", () => {
+                    // Retrieve and display place details
+                    displayPlaceDetails(place);
+                });
+
+                bounds.extend(place.geometry.location);
+                customMarkers.push(marker);
+            });
+
+            map.fitBounds(bounds);
+        });
+
+        // Perform a nearby search
+        const request = {
+            location: location,
+            radius: 1000, // Search within a 1km radius
+            type: [""], // Change to your desired type (e.g., "hospital")
+        };
+
+    }
+
+    function createMarker(place) {
+        const marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location,
+        });
+
+        google.maps.event.addListener(marker, "click", () => {
+            // Retrieve and display place details
+            displayPlaceDetails(place);
+        });
+
+        customMarkers.push(marker);
+    }
+
+    function clearMarkers() {
+        customMarkers.forEach((marker) => {
+            marker.setMap(null);
+        });
+        customMarkers = [];
+    }
+
+    function displayPlaceDetails(place) {
+        const placeDetails = document.getElementById("place-details");
+        placeDetails.innerHTML = `<strong>${place.name}</strong><br>${place.formatted_address}<br>Rating: ${place.rating}`;
+    }
+
+    function refreshPage() {
+        location.reload();
+    }
+</script>
+
+<script>
+    // Replace 'YOUR_API_KEY' with your actual Google Maps API key.
+    function loadScript() {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAmNkaGHturLmgMk_KAxICazFBh38Zoov8&libraries=places&callback=initMap`;
+        script.async = true;
+        document.head.appendChild(script);
+    }
+    loadScript();
+</script>
+
+</body>
+</html>
